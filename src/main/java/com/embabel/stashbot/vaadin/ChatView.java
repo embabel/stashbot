@@ -3,8 +3,8 @@ package com.embabel.stashbot.vaadin;
 import com.embabel.agent.api.channel.MessageOutputChannelEvent;
 import com.embabel.agent.api.channel.OutputChannel;
 import com.embabel.agent.api.channel.OutputChannelEvent;
-import com.embabel.agent.rag.lucene.LuceneSearchOperations;
 import com.embabel.chat.*;
+import com.embabel.stashbot.DocumentService;
 import com.embabel.stashbot.StashbotProperties;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -41,15 +41,18 @@ public class ChatView extends VerticalLayout {
     private final Chatbot chatbot;
     private final String persona;
     private final StashbotProperties properties;
+    private final DocumentService documentService;
 
     private VerticalLayout messagesLayout;
     private Scroller messagesScroller;
     private TextField inputField;
     private Button sendButton;
+    private Footer footer;
 
-    public ChatView(Chatbot chatbot, StashbotProperties properties, LuceneSearchOperations searchOperations) {
+    public ChatView(Chatbot chatbot, StashbotProperties properties, DocumentService documentService) {
         this.chatbot = chatbot;
         this.properties = properties;
+        this.documentService = documentService;
         this.persona = properties.voice().persona();
 
         setSizeFull();
@@ -91,8 +94,18 @@ public class ChatView extends VerticalLayout {
         add(createInputSection());
 
         // Footer
-        var info = searchOperations.info();
-        add(new Footer(info.getDocumentCount(), info.getChunkCount()));
+        footer = new Footer(documentService.getDocumentCount(), documentService.getChunkCount());
+        add(footer);
+
+        // Documents drawer
+        var drawer = new DocumentsDrawer(documentService, this::refreshFooter);
+        getElement().appendChild(drawer.getElement());
+    }
+
+    private void refreshFooter() {
+        remove(footer);
+        footer = new Footer(documentService.getDocumentCount(), documentService.getChunkCount());
+        add(footer);
     }
 
     private record SessionData(ChatSession chatSession, BlockingQueue<Message> responseQueue) {
