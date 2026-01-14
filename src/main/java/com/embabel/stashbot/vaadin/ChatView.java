@@ -3,6 +3,7 @@ package com.embabel.stashbot.vaadin;
 import com.embabel.agent.api.channel.MessageOutputChannelEvent;
 import com.embabel.agent.api.channel.OutputChannel;
 import com.embabel.agent.api.channel.OutputChannelEvent;
+import com.embabel.agent.rag.lucene.LuceneSearchOperations;
 import com.embabel.chat.*;
 import com.embabel.stashbot.StashbotProperties;
 import com.vaadin.flow.component.Key;
@@ -46,7 +47,7 @@ public class ChatView extends VerticalLayout {
     private TextField inputField;
     private Button sendButton;
 
-    public ChatView(Chatbot chatbot, StashbotProperties properties) {
+    public ChatView(Chatbot chatbot, StashbotProperties properties, LuceneSearchOperations searchOperations) {
         this.chatbot = chatbot;
         this.properties = properties;
         this.persona = properties.voice().persona();
@@ -88,6 +89,10 @@ public class ChatView extends VerticalLayout {
 
         // Input section
         add(createInputSection());
+
+        // Footer
+        var info = searchOperations.info();
+        add(new Footer(info.getDocumentCount(), info.getChunkCount()));
     }
 
     private record SessionData(ChatSession chatSession, BlockingQueue<Message> responseQueue) {

@@ -207,3 +207,21 @@ vaadin-button[theme~="primary"]:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--sb-text-muted);
 }
+
+/* Footer */
+.app-footer {
+  padding-top: var(--lumo-space-s);
+  border-top: 1px solid var(--sb-border);
+  margin-top: var(--lumo-space-s);
+}
+
+.footer-copyright,
+.footer-stats {
+  color: var(--sb-text-muted);
+  font-size: var(--lumo-font-size-xs);
+}
+
+.footer-separator {
+  color: var(--sb-text-muted);
+  opacity: 0.5;
+}
