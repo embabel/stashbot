@@ -3,12 +3,15 @@ package com.embabel.stashbot.vaadin;
 import com.embabel.agent.api.channel.MessageOutputChannelEvent;
 import com.embabel.agent.api.channel.OutputChannel;
 import com.embabel.agent.api.channel.OutputChannelEvent;
+import com.embabel.agent.api.channel.ProgressOutputChannelEvent;
 import com.embabel.chat.*;
 import com.embabel.stashbot.DocumentService;
 import com.embabel.stashbot.StashbotProperties;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -111,13 +114,13 @@ public class ChatView extends VerticalLayout {
     private record SessionData(ChatSession chatSession, BlockingQueue<Message> responseQueue) {
     }
 
-    private SessionData getOrCreateSession() {
+    private SessionData getOrCreateSession(UI ui) {
         var vaadinSession = VaadinSession.getCurrent();
         var sessionData = (SessionData) vaadinSession.getAttribute("sessionData");
 
         if (sessionData == null) {
             var responseQueue = new ArrayBlockingQueue<Message>(10);
-            var outputChannel = new QueueingOutputChannel(responseQueue);
+            var outputChannel = new VaadinOutputChannel(responseQueue, ui);
             var chatSession = chatbot.createSession(null, outputChannel, UUID.randomUUID().toString());
             sessionData = new SessionData(chatSession, responseQueue);
             vaadinSession.setAttribute("sessionData", sessionData);
@@ -163,10 +166,10 @@ public class ChatView extends VerticalLayout {
         messagesLayout.add(ChatMessageBubble.user(text));
         scrollToBottom();
 
-        var sessionData = getOrCreateSession();
-
         var ui = getUI().orElse(null);
         if (ui == null) return;
+
+        var sessionData = getOrCreateSession(ui);
 
         new Thread(() -> {
             try {
@@ -225,14 +228,46 @@ public class ChatView extends VerticalLayout {
         }
     }
 
-    private record QueueingOutputChannel(BlockingQueue<Message> queue) implements OutputChannel {
+    /**
+     * Output channel that queues messages and displays tool calls in real-time.
+     */
+    private class VaadinOutputChannel implements OutputChannel {
+        private final BlockingQueue<Message> queue;
+        private final UI ui;
+        private Div currentToolCallIndicator;
+
+        VaadinOutputChannel(BlockingQueue<Message> queue, UI ui) {
+            this.queue = queue;
+            this.ui = ui;
+        }
+
         @Override
         public void send(OutputChannelEvent event) {
             if (event instanceof MessageOutputChannelEvent msgEvent) {
                 var msg = msgEvent.getMessage();
                 if (msg instanceof AssistantMessage) {
+                    // Remove tool call indicator before showing response
+                    ui.access(() -> {
+                        if (currentToolCallIndicator != null) {
+                            messagesLayout.remove(currentToolCallIndicator);
+                            currentToolCallIndicator = null;
+                        }
+                    });
                     queue.offer(msg);
                 }
+            } else if (event instanceof ProgressOutputChannelEvent progressEvent) {
+                ui.access(() -> {
+                    // Remove previous indicator if exists
+                    if (currentToolCallIndicator != null) {
+                        messagesLayout.remove(currentToolCallIndicator);
+                    }
+                    // Create new tool call indicator
+                    currentToolCallIndicator = new Div();
+                    currentToolCallIndicator.addClassName("tool-call-indicator");
+                    currentToolCallIndicator.setText(progressEvent.getMessage());
+                    messagesLayout.add(currentToolCallIndicator);
+                    scrollToBottom();
+                });
             }
         }
     }

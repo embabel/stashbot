@@ -390,6 +390,24 @@ vaadin-button[theme~="primary"]:hover {
   border-color: var(--sb-accent);
 }
 
+/* Tool Call Indicator */
+.tool-call-indicator {
+  color: var(--sb-text-muted);
+  font-size: var(--lumo-font-size-s);
+  padding: var(--lumo-space-xs) var(--lumo-space-m);
+  background: var(--sb-bg-light);
+  border-left: 3px solid var(--sb-accent);
+  border-radius: var(--lumo-border-radius-s);
+  margin: var(--lumo-space-xs) 0;
+  font-family: monospace;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .side-panel {
