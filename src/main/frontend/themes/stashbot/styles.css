@@ -1,0 +1,209 @@
+/* Stashbot - Clean Dark Theme */
+
+:root {
+  /* Dark color palette */
+  --sb-bg-dark: #0f0f14;
+  --sb-bg-medium: #1a1a22;
+  --sb-bg-light: #242430;
+  --sb-accent: #6366f1;
+  --sb-accent-light: #818cf8;
+  --sb-text-primary: #f1f5f9;
+  --sb-text-secondary: #94a3b8;
+  --sb-text-muted: #64748b;
+  --sb-border: rgba(148, 163, 184, 0.2);
+  --sb-error: #ef4444;
+  --sb-success: #22c55e;
+
+  /* Lumo overrides */
+  --lumo-base-color: var(--sb-bg-medium);
+  --lumo-primary-color: var(--sb-accent);
+  --lumo-primary-text-color: var(--sb-accent);
+  --lumo-primary-contrast-color: white;
+  --lumo-header-text-color: var(--sb-text-primary);
+  --lumo-body-text-color: var(--sb-text-primary);
+  --lumo-secondary-text-color: var(--sb-text-secondary);
+  --lumo-tertiary-text-color: var(--sb-text-muted);
+  --lumo-contrast: var(--sb-text-primary);
+  --lumo-contrast-10pct: rgba(241, 245, 249, 0.1);
+  --lumo-contrast-20pct: rgba(241, 245, 249, 0.2);
+  --lumo-shade: var(--sb-bg-dark);
+  --lumo-error-color: var(--sb-error);
+  --lumo-success-color: var(--sb-success);
+  --lumo-border-radius-m: 8px;
+  --lumo-border-radius-l: 12px;
+  --lumo-font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Body */
+html {
+  background: var(--sb-bg-dark);
+  min-height: 100vh;
+}
+
+body {
+  background: transparent;
+}
+
+/* Main layout */
+vaadin-vertical-layout {
+  background: transparent;
+}
+
+/* Header */
+.chat-title {
+  color: var(--sb-text-primary);
+  font-weight: 600;
+  margin: 0;
+}
+
+.chat-subtitle {
+  color: var(--sb-text-secondary);
+  font-size: var(--lumo-font-size-s);
+}
+
+/* Chat scroller */
+.chat-scroller {
+  background: var(--sb-bg-medium);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--lumo-border-radius-l);
+}
+
+/* Chat bubbles */
+.chat-bubble-container {
+  display: flex;
+  width: 100%;
+  margin-bottom: var(--lumo-space-s);
+}
+
+.chat-bubble-container.user {
+  justify-content: flex-end;
+}
+
+.chat-bubble-container.assistant {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: var(--lumo-space-m);
+  border-radius: var(--lumo-border-radius-l);
+}
+
+.chat-bubble.user {
+  background: var(--sb-accent);
+  color: white;
+}
+
+.chat-bubble.assistant {
+  background: var(--sb-bg-light);
+  border: 1px solid var(--sb-border);
+  color: var(--sb-text-primary);
+}
+
+.chat-bubble-sender {
+  display: block;
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--lumo-space-xs);
+  opacity: 0.8;
+}
+
+.chat-bubble-text {
+  line-height: 1.5;
+}
+
+/* Markdown rendering in assistant messages */
+.chat-bubble.assistant .chat-bubble-text p {
+  margin: 0 0 var(--lumo-space-s) 0;
+}
+
+.chat-bubble.assistant .chat-bubble-text p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble.assistant .chat-bubble-text code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.chat-bubble.assistant .chat-bubble-text pre {
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--lumo-space-s);
+  border-radius: var(--lumo-border-radius-m);
+  overflow-x: auto;
+  margin: var(--lumo-space-s) 0;
+}
+
+.chat-bubble.assistant .chat-bubble-text pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.chat-bubble.assistant .chat-bubble-text ul,
+.chat-bubble.assistant .chat-bubble-text ol {
+  margin: var(--lumo-space-s) 0;
+  padding-left: var(--lumo-space-l);
+}
+
+.chat-bubble.assistant .chat-bubble-text blockquote {
+  border-left: 3px solid var(--sb-accent);
+  margin: var(--lumo-space-s) 0;
+  padding-left: var(--lumo-space-m);
+  color: var(--sb-text-secondary);
+}
+
+/* Error message */
+.chat-bubble-error {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--sb-error);
+  color: var(--sb-error);
+  padding: var(--lumo-space-m);
+  border-radius: var(--lumo-border-radius-m);
+  text-align: center;
+}
+
+/* Text input */
+vaadin-text-field::part(input-field) {
+  background: var(--sb-bg-light);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--lumo-border-radius-m);
+}
+
+vaadin-text-field:focus-within::part(input-field) {
+  border-color: var(--sb-accent);
+}
+
+/* Send button */
+vaadin-button[theme~="primary"] {
+  background: var(--sb-accent);
+  color: white;
+  border-radius: var(--lumo-border-radius-m);
+}
+
+vaadin-button[theme~="primary"]:hover {
+  background: var(--sb-accent-light);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sb-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-text-muted);
+}

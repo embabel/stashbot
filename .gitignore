@@ -1,0 +1,38 @@
+# Build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Logs
+logs/
+*.log
+
+# Vaadin
+node_modules/
+src/main/frontend/generated/
+frontend/generated/
+vite.generated.ts
+vite.config.ts
+types.d.ts
+tsconfig.json
+pnpm-lock.yaml
+package-lock.json
+package.json
+
+# Lucene index
+.lucene-index/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local

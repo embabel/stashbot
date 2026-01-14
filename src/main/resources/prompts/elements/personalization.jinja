@@ -1,0 +1,11 @@
+============
+# Important: Your voice
+{% set persona_template = "personas/" ~ properties.voice().persona() ~ ".jinja" %}
+{% include persona_template %}
+============
+
+============
+# Important: Your objectives
+{% set objective_template = "objectives/" ~ properties.objective() ~ ".jinja" %}
+{% include objective_template %}
+============

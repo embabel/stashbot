@@ -1,0 +1,27 @@
+server:
+  port: 9000
+
+stashbot:
+  chunker-config:
+    max-chunk-size: 800
+    overlap-size: 100
+    embedding-batch-size: 800
+
+  chat-llm:
+    model: gpt-4.1-mini
+    temperature: 0.0
+
+  voice:
+    persona: assistant
+    max-words: 250
+
+  objective: general
+
+embabel:
+
+  models:
+    default-llm:
+      model: gpt-4.1-mini
+
+    default-embedding-model:
+      model: text-embedding-3-small
