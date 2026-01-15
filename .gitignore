@@ -1,6 +1,7 @@
 # Build
+build/
 target/
-!.mvn/wrapper/maven-wrapper.jar
+.gradle/
 
 .claude
 
