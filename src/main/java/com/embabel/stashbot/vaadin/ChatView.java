@@ -115,7 +115,7 @@ public class ChatView extends VerticalLayout {
         add(footer);
 
         // Documents drawer
-        var drawer = new DocumentsDrawer(documentService, this::refreshFooter);
+        var drawer = new DocumentsDrawer(documentService, currentUser, this::refreshFooter);
         getElement().appendChild(drawer.getElement());
     }
 

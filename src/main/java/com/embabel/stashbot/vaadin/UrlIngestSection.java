@@ -1,6 +1,7 @@
 package com.embabel.stashbot.vaadin;
 
 import com.embabel.stashbot.DocumentService;
+import com.embabel.stashbot.user.StashbotUser;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Span;
@@ -22,8 +23,10 @@ public class UrlIngestSection extends VerticalLayout {
 
     private final TextField urlField;
     private final Button ingestButton;
+    private final DocumentService.Context context;
 
-    public UrlIngestSection(DocumentService documentService, Runnable onSuccess) {
+    public UrlIngestSection(DocumentService documentService, StashbotUser user, Runnable onSuccess) {
+        this.context = new DocumentService.Context(user);
         setPadding(true);
         setSpacing(true);
 
@@ -67,7 +70,7 @@ public class UrlIngestSection extends VerticalLayout {
 
         new Thread(() -> {
             try {
-                documentService.ingestUrl(finalUrl);
+                documentService.ingestUrl(finalUrl, context);
 
                 if (ui != null) {
                     ui.access(() -> {

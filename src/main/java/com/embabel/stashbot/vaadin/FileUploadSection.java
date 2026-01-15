@@ -1,6 +1,7 @@
 package com.embabel.stashbot.vaadin;
 
 import com.embabel.stashbot.DocumentService;
+import com.embabel.stashbot.user.StashbotUser;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -17,9 +18,11 @@ public class FileUploadSection extends VerticalLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadSection.class);
 
-    public FileUploadSection(DocumentService documentService, Runnable onSuccess) {
+    public FileUploadSection(DocumentService documentService, StashbotUser user, Runnable onSuccess) {
         setPadding(true);
         setSpacing(true);
+
+        var context = new DocumentService.Context(user);
 
         var instructions = new Span("Upload documents to add to the knowledge base");
         instructions.addClassName("section-instructions");
@@ -44,7 +47,7 @@ public class FileUploadSection extends VerticalLayout {
             try {
                 var inputStream = buffer.getInputStream();
                 var uri = "upload://" + filename;
-                documentService.ingestStream(inputStream, uri, filename);
+                documentService.ingestStream(inputStream, uri, filename, context);
 
                 Notification.show("Uploaded: " + filename, 3000, Notification.Position.BOTTOM_CENTER)
                         .addThemeVariants(NotificationVariant.LUMO_SUCCESS);

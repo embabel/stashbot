@@ -1,6 +1,7 @@
 package com.embabel.stashbot.vaadin;
 
 import com.embabel.stashbot.DocumentService;
+import com.embabel.stashbot.user.StashbotUser;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.button.Button;
@@ -27,7 +28,7 @@ public class DocumentsDrawer extends Div {
     private final UrlIngestSection urlSection;
     private final DocumentListSection documentsSection;
 
-    public DocumentsDrawer(DocumentService documentService, Runnable onDocumentsChanged) {
+    public DocumentsDrawer(DocumentService documentService, StashbotUser user, Runnable onDocumentsChanged) {
         // Backdrop for closing panel when clicking outside
         backdrop = new Div();
         backdrop.addClassName("side-panel-backdrop");
@@ -79,12 +80,12 @@ public class DocumentsDrawer extends Div {
         // Create sections (documentsSection first since others reference it)
         documentsSection = new DocumentListSection(documentService, onDocumentsChanged);
 
-        uploadSection = new FileUploadSection(documentService, () -> {
+        uploadSection = new FileUploadSection(documentService, user, () -> {
             documentsSection.refresh();
             onDocumentsChanged.run();
         });
 
-        urlSection = new UrlIngestSection(documentService, () -> {
+        urlSection = new UrlIngestSection(documentService, user, () -> {
             documentsSection.refresh();
             onDocumentsChanged.run();
         });
