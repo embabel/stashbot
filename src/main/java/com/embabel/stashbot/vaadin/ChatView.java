@@ -7,6 +7,8 @@ import com.embabel.agent.api.channel.ProgressOutputChannelEvent;
 import com.embabel.chat.*;
 import com.embabel.stashbot.DocumentService;
 import com.embabel.stashbot.StashbotProperties;
+import com.embabel.stashbot.user.StashbotUser;
+import com.embabel.stashbot.user.StashbotUserService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -22,7 +24,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
+import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Route("")
 @PageTitle("Stashbot")
-@AnonymousAllowed
+@PermitAll
 public class ChatView extends VerticalLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatView.class);
@@ -45,6 +47,7 @@ public class ChatView extends VerticalLayout {
     private final String persona;
     private final StashbotProperties properties;
     private final DocumentService documentService;
+    private final StashbotUser currentUser;
 
     private VerticalLayout messagesLayout;
     private Scroller messagesScroller;
@@ -52,21 +55,29 @@ public class ChatView extends VerticalLayout {
     private Button sendButton;
     private Footer footer;
 
-    public ChatView(Chatbot chatbot, StashbotProperties properties, DocumentService documentService) {
+    public ChatView(Chatbot chatbot, StashbotProperties properties, DocumentService documentService,
+                    StashbotUserService userService) {
         this.chatbot = chatbot;
         this.properties = properties;
         this.documentService = documentService;
+        this.currentUser = userService.getAuthenticatedUser();
         this.persona = properties.voice().persona();
 
         setSizeFull();
         setPadding(true);
         setSpacing(true);
 
-        // Header
-        var header = new VerticalLayout();
-        header.setPadding(false);
-        header.setSpacing(false);
-        header.setAlignItems(Alignment.CENTER);
+        // Header row with title and user section
+        var headerRow = new HorizontalLayout();
+        headerRow.setWidthFull();
+        headerRow.setAlignItems(Alignment.CENTER);
+        headerRow.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        headerRow.setPadding(false);
+
+        // Title section (left)
+        var titleSection = new VerticalLayout();
+        titleSection.setPadding(false);
+        titleSection.setSpacing(false);
 
         var title = new H3("Stashbot");
         title.addClassName("chat-title");
@@ -74,8 +85,11 @@ public class ChatView extends VerticalLayout {
         var subtitle = new Span("RAG-powered document assistant");
         subtitle.addClassName("chat-subtitle");
 
-        header.add(title, subtitle);
-        add(header);
+        titleSection.add(title, subtitle);
+
+        // User section (right)
+        headerRow.add(titleSection, new UserSection(currentUser));
+        add(headerRow);
 
         // Messages container
         messagesLayout = new VerticalLayout();
@@ -121,7 +135,7 @@ public class ChatView extends VerticalLayout {
         if (sessionData == null) {
             var responseQueue = new ArrayBlockingQueue<Message>(10);
             var outputChannel = new VaadinOutputChannel(responseQueue, ui);
-            var chatSession = chatbot.createSession(null, outputChannel, UUID.randomUUID().toString());
+            var chatSession = chatbot.createSession(currentUser, outputChannel, UUID.randomUUID().toString());
             sessionData = new SessionData(chatSession, responseQueue);
             vaadinSession.setAttribute("sessionData", sessionData);
             logger.info("Created new chat session");

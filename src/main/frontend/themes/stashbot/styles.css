@@ -408,6 +408,59 @@ vaadin-button[theme~="primary"]:hover {
   50% { opacity: 1; }
 }
 
+/* Login View */
+.login-view {
+  background: var(--sb-bg-dark);
+}
+
+.login-title {
+  color: var(--sb-text-primary);
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.login-subtitle {
+  color: var(--sb-text-secondary);
+  font-size: var(--lumo-font-size-s);
+  margin-bottom: var(--lumo-space-l);
+}
+
+/* User Section */
+.profile-chip {
+  background: var(--sb-bg-light);
+  border: 1px solid var(--sb-border);
+  border-radius: 20px;
+  padding: var(--lumo-space-xs) var(--lumo-space-m) var(--lumo-space-xs) var(--lumo-space-xs);
+  gap: var(--lumo-space-s);
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sb-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 600;
+}
+
+.user-name {
+  color: var(--sb-text-primary);
+  font-size: var(--lumo-font-size-s);
+}
+
+.logout-button {
+  color: var(--sb-text-secondary);
+  font-size: var(--lumo-font-size-s);
+}
+
+.logout-button:hover {
+  color: var(--sb-text-primary);
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .side-panel {

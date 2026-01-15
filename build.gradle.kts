@@ -48,6 +48,7 @@ dependencies {
 
     // Web and Vaadin
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.vaadin:vaadin-spring-boot-starter")
 
     // Markdown rendering for chat messages
