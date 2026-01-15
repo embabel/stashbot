@@ -1,7 +1,5 @@
 # Build
-build/
 target/
-.gradle/
 
 .claude
 
