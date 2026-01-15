@@ -54,6 +54,7 @@ public class ChatView extends VerticalLayout {
     private TextField inputField;
     private Button sendButton;
     private Footer footer;
+    private UserSection userSection;
 
     public ChatView(Chatbot chatbot, StashbotProperties properties, DocumentService documentService,
                     StashbotUserService userService) {
@@ -88,7 +89,8 @@ public class ChatView extends VerticalLayout {
         titleSection.add(title, subtitle);
 
         // User section (right)
-        headerRow.add(titleSection, new UserSection(currentUser));
+        userSection = new UserSection(currentUser, documentService);
+        headerRow.add(titleSection, userSection);
         add(headerRow);
 
         // Messages container
@@ -123,6 +125,7 @@ public class ChatView extends VerticalLayout {
         remove(footer);
         footer = new Footer(documentService.getDocumentCount(), documentService.getChunkCount());
         add(footer);
+        userSection.refreshContexts();
     }
 
     private record SessionData(ChatSession chatSession, BlockingQueue<Message> responseQueue) {

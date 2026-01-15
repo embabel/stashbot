@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Service for managing document ingestion and retrieval.
@@ -22,6 +25,13 @@ public class DocumentService {
 
     private final ChunkingContentElementRepository contentRepository;
     private final TikaHierarchicalContentReader contentReader;
+    private final List<DocumentInfo> documents = new CopyOnWriteArrayList<>();
+
+    /**
+     * Summary info about an ingested document.
+     */
+    public record DocumentInfo(String uri, String title, String context, Instant ingestedAt) {
+    }
 
     public record Context(StashbotUser user) {
         public static final String CONTEXT_KEY = "context";
@@ -46,6 +56,7 @@ public class DocumentService {
         var document = contentReader.parseFile(file, file.toURI().toString())
                 .withMetadata(context.metadata());
         contentRepository.writeAndChunkDocument(document);
+        trackDocument(document, context);
         logger.info("Ingested file: {}", file.getName());
         return document;
     }
@@ -58,6 +69,7 @@ public class DocumentService {
         var document = contentReader.parseContent(inputStream, uri)
                 .withMetadata(context.metadata());
         contentRepository.writeAndChunkDocument(document);
+        trackDocument(document, context);
         logger.info("Ingested: {}", filename);
         return document;
     }
@@ -70,8 +82,35 @@ public class DocumentService {
         var document = contentReader.parseResource(url)
                 .withMetadata(context.metadata());
         contentRepository.writeAndChunkDocument(document);
+        trackDocument(document, context);
         logger.info("Ingested URL: {}", url);
         return document;
+    }
+
+    private void trackDocument(NavigableDocument document, Context context) {
+        documents.add(new DocumentInfo(
+                document.getUri(),
+                document.getTitle(),
+                context.user().getCurrentContext(),
+                Instant.now()
+        ));
+    }
+
+    /**
+     * Get list of all ingested documents.
+     */
+    public List<DocumentInfo> getDocuments() {
+        return List.copyOf(documents);
+    }
+
+    /**
+     * Get list of distinct contexts found in documents
+     */
+    public List<String> contexts() {
+        return documents.stream()
+                .map(DocumentInfo::context)
+                .distinct()
+                .toList();
     }
 
     /**
@@ -80,7 +119,11 @@ public class DocumentService {
     public boolean deleteDocument(String uri) {
         logger.info("Deleting document: {}", uri);
         var result = contentRepository.deleteRootAndDescendants(uri);
-        return result != null;
+        if (result != null) {
+            documents.removeIf(doc -> doc.uri().equals(uri));
+            return true;
+        }
+        return false;
     }
 
     /**
