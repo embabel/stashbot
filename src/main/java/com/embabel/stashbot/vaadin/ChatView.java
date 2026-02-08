@@ -138,7 +138,8 @@ public class ChatView extends VerticalLayout {
         if (sessionData == null) {
             var responseQueue = new ArrayBlockingQueue<Message>(10);
             var outputChannel = new VaadinOutputChannel(responseQueue, ui);
-            var chatSession = chatbot.createSession(currentUser, outputChannel, UUID.randomUUID().toString());
+            var chatSession = chatbot.createSession(
+                    currentUser, outputChannel, null, null);
             sessionData = new SessionData(chatSession, responseQueue);
             vaadinSession.setAttribute("sessionData", sessionData);
             logger.info("Created new chat session");
