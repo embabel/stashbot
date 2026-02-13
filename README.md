@@ -1,3 +1,10 @@
+> ## :warning: This project has been superseded by [**Urbot**](https://github.com/embabel/urbot).
+>
+> All future development is happening in the new repo.
+> **Please head to [embabel/urbot](https://github.com/embabel/urbot) for the latest code, issues, and documentation.**
+
+---
+
 <img align="left" src="https://github.com/embabel/embabel-agent/blob/main/embabel-agent-api/images/315px-Meister_der_Weltenchronik_001.jpg?raw=true" width="180">
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -13,7 +20,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-# Stashbot
+# Stashbot (Archived)
 
 **A RAG-powered document chatbot with a Vaadin web interface, built on the [Embabel Agent Framework](https://embabel.com).**
 
